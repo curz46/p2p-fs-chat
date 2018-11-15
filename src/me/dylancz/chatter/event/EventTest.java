@@ -1,5 +1,10 @@
 package me.dylancz.chatter.event;
 
+import me.dylancz.chatter.event.packet.ExampleSubPacket;
+import me.dylancz.chatter.event.packet.ExampleSuperPacket;
+import me.dylancz.chatter.event.packet.PacketBus;
+import me.dylancz.chatter.event.packet.PacketEvent;
+import me.dylancz.chatter.event.packet.PacketReceivedEvent;
 import me.dylancz.chatter.net.packet.ConnectedPacket;
 import me.dylancz.chatter.net.packet.Packet;
 import me.dylancz.chatter.net.packet.PingPacket;
@@ -29,22 +34,15 @@ public class EventTest {
     }
 
     public static void main(final String[] args) {
-        final EventBus<Packet> bus = new EventBus<>();
+        final PacketBus bus = new PacketBus();
         final EventTest test = new EventTest();
         bus.registerListeners(test);
-        bus.post(new ConnectedPacket());
-        bus.post(new PingPacket());
-        bus.post(new PongPacket());
+        bus.post(new PacketReceivedEvent<>(new ExampleSubPacket(), null));
     }
 
     @Subscribe
-    public void onSomeEvent(final ConnectedPacket packet) {
-        System.out.println("Hello: " + packet.getType());
-    }
-
-    @Subscribe
-    public void onAnotherEvent(final Packet packet) {
-        System.out.println("All events: " + packet);
+    public void onSomeEvent(final PacketEvent<ExampleSubPacket> event) {
+        System.out.println("Sub Packet: " + event.getPacket());
     }
 
     public void someRandomMethod() {}
