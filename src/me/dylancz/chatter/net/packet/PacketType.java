@@ -1,14 +1,12 @@
 package me.dylancz.chatter.net.packet;
 
 import java.util.function.Supplier;
-import me.dylancz.chatter.event.packet.ExampleSubPacket;
 
 public enum PacketType {
 
     CONNECTED(0, ConnectedPacket.class, ConnectedPacket::new),
     PING(1, PingPacket.class, PingPacket::new),
-    PONG(2, PongPacket.class, PongPacket::new),
-    SUB_PACKET(3, ExampleSubPacket.class, ExampleSubPacket::new);
+    PONG(2, PongPacket.class, PongPacket::new);
 
     private final int id;
     private final Class<? extends Packet> packetClass;
