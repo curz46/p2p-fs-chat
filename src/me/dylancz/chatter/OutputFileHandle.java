@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class OutputFileHandle extends FileHandle {
 
@@ -15,9 +16,17 @@ public class OutputFileHandle extends FileHandle {
     }
 
     @Override
-    public void open() throws FileNotFoundException {
+    public DataOutputStream open() throws FileNotFoundException {
+        if (this.isOpen()) return this.out;
         this.stream = new FileOutputStream(super.file);
-        this.out = new DataOutputStream(this.stream);
+        return this.out = new DataOutputStream(this.stream);
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.out.close();
+        this.out = null;
+        this.stream = null;
     }
 
     @Override

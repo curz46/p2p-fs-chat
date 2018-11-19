@@ -9,7 +9,7 @@ public class ConnectedPacketHandler extends PacketHandler<ConnectedPacket> {
 
     @Override
     public void handle(final User source, final ConnectedPacket packet) {
-        System.out.println("User{" + source.getPath() + "} connected, version: " + packet.getVersion());
+//        System.out.println("User{" + source.getPath() + "} connected, version: " + packet.getVersion());
     }
 
 }

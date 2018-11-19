@@ -7,14 +7,20 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import me.dylancz.chatter.event.Event;
 import me.dylancz.chatter.event.EventBus;
+import me.dylancz.chatter.event.LockableBus;
 import me.dylancz.chatter.event.Subscribe;
 import me.dylancz.chatter.net.packet.Packet;
 import me.dylancz.chatter.net.packet.PacketType;
 
-public class PacketBus {
+/**
+ * An EventBus with extended capabilities. It will also check that <T extends Packet> in
+ * PacketEvent<T> is equal before passing the Event to the Subscriber.
+ */
+public class PacketBus extends LockableBus {
 
-    private final Map<PacketType, EventBus<PacketEvent>> busMap = new HashMap<>();
+    private final Map<PacketType, EventBus> busMap = new HashMap<>();
 
     public <T extends PacketEvent> void post(final T event) {
         final PacketType type = event.getPacket().getType();
@@ -27,7 +33,7 @@ public class PacketBus {
                                                                               final Class<T> clazz,
                                                                               final PacketType type) {
         this.busMap
-            .computeIfAbsent(type, k -> new EventBus<>())
+            .computeIfAbsent(type, k -> new EventBus())
             .registerListener(listener, clazz);
     }
 

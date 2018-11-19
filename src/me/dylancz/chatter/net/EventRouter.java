@@ -56,13 +56,12 @@ public class EventRouter implements Runnable {
     public void connect(final Path path) {
         System.out.println("Connected: " + path);
         // Create a new User for this Path
-        this.userHandler.createUser(path);
+//        this.userHandler.createUser(path);
     }
 
     public void disconnect(final Path path) {
         System.out.println("Disconnected: " + path);
         // Delete the User for this Path
-        this.userHandler.deleteUser(path);
     }
 
     public void message(final Path path) {
@@ -75,17 +74,17 @@ public class EventRouter implements Runnable {
 //        }
 //        System.out.println("Message: " + path);
         // Parse and handle the message content as a Packet
-        this.userHandler.findUserForPath(path)
-            .ifPresent(user -> {
-                final File file = path.toFile();
-                final List<Packet> packets = PacketIO.read(file, user.getByteOffset());
-                for (final Packet packet : packets) {
-                    final PacketHandler handler = PacketRegistry.getHandler(packet.getType());
-                    //noinspection unchecked
-                    handler.handle(user, packet);
-                }
-                user.setByteOffset(file.length());
-            });
+//        this.userHandler.findUserForPath(path)
+//            .ifPresent(user -> {
+//                final File file = path.toFile();
+//                final List<Packet> packets = PacketIO.read(file, user.getByteOffset());
+//                for (final Packet packet : packets) {
+//                    final PacketHandler handler = PacketRegistry.getHandler(packet.getType());
+//                    //noinspection unchecked
+//                    handler.handle(user, packet);
+//                }
+//                user.setByteOffset(file.length());
+//            });
     }
 
 }

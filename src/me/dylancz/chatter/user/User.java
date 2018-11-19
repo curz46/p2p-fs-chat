@@ -1,35 +1,31 @@
 package me.dylancz.chatter.user;
 
-import java.nio.file.Path;
+import java.util.UUID;
+import me.dylancz.chatter.InputFileHandle;
 
 public class User {
 
-    private final Path path;
-    private long byteOffset;
-    private long pingSent;
+    private final UUID uuid;
+    private InputFileHandle handle;
 
-    public User(final Path path) {
-        this.path = path;
+    public User(final UUID uuid) {
+        this.uuid = uuid;
     }
 
-    public void setByteOffset(final long byteOffset) {
-        this.byteOffset = byteOffset;
+    public static User fromHandle(final InputFileHandle handle) {
+        final UUID uuid = handle.parseUUID()
+            .orElseThrow(() -> new RuntimeException(""));
+        final User user = new User(uuid);
+        user.setHandle(handle);
+        return user;
     }
 
-    public void setPingTime(final long pingSent) {
-        this.pingSent = pingSent;
+    public InputFileHandle getHandle() {
+        return handle;
     }
 
-    public Path getPath() {
-        return this.path;
-    }
-
-    public long getByteOffset() {
-        return this.byteOffset;
-    }
-
-    public long getPingTime() {
-        return this.pingSent;
+    public void setHandle(final InputFileHandle handle) {
+        this.handle = handle;
     }
 
 }

@@ -46,8 +46,8 @@ public class Chatter {
                     existing.delete();
                 } else {
                     System.out.println("Found existing User{" + existing.toPath() + "}");
-                    final User user = userHandler.createUser(existing.toPath());
-                    user.setByteOffset(existing.length());
+//                    final User user = userHandler.createUser(existing.toPath());
+//                    user.setByteOffset(existing.length());
                 }
             }
         }
@@ -82,7 +82,7 @@ public class Chatter {
                 lastPing = now;
                 final PingPacket ping = new PingPacket();
                 PacketIO.write(file, ping);
-                userHandler.getUsers().forEach(user -> user.setPingTime(now));
+//                userHandler.getUsers().forEach(user -> user.setPingTime(now));
             }
         }
     }

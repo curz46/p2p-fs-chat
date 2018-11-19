@@ -1,8 +1,9 @@
 package me.dylancz.chatter.event.packet;
 
+import me.dylancz.chatter.event.Event;
 import me.dylancz.chatter.net.packet.Packet;
 
-public abstract class PacketEvent<T extends Packet> {
+public abstract class PacketEvent<T extends Packet> extends Event {
 
     protected final T packet;
 
