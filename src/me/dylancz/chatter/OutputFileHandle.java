@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import me.dylancz.chatter.net.packet.Packet;
+import me.dylancz.chatter.net.packet.PacketType;
 
 public class OutputFileHandle extends FileHandle {
 
@@ -13,6 +15,28 @@ public class OutputFileHandle extends FileHandle {
 
     protected OutputFileHandle(final File file) {
         super(file);
+    }
+
+    public synchronized void write(final Packet packet) {
+        if (!this.isOpen()) {
+            throw new RuntimeException("OutputFileHandle cannot write a Packet while not open");
+        }
+        try {
+            // byte; packet id
+            // int; length
+            // bytes; content
+            final PacketType type = packet.getType();
+            this.out.writeByte(type.getId());
+            final byte[] bytes = packet.write();
+            this.out.writeInt(bytes.length);
+            this.out.write(bytes, 0, bytes.length);
+            // This line is necessary in order to make sure that the WatchService accurately
+            // determine that the File has changed.
+            super.file.setLastModified(System.currentTimeMillis());
+            this.out.flush();
+        } catch (final IOException e) {
+            throw new RuntimeException("Unable to write packets to File: " + e);
+        }
     }
 
     @Override

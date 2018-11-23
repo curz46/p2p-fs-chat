@@ -30,7 +30,7 @@ public class Chatter {
     public void start() throws IOException {
         System.out.println("Initialising...");
 
-        final File file = new File(path, UUID.randomUUID() + ".txt");
+        final File file = new File(this.path, UUID.randomUUID() + ".txt");
 
         final UserHandler userHandler = new UserHandler();
         final PacketIO packetIO = new PacketIO();
@@ -60,7 +60,7 @@ public class Chatter {
         }
 
         final BlockingQueue<Event> queue = new LinkedBlockingQueue<>(10);
-        final FileWatcher watcher = new FileWatcher(Paths.get(this.path), queue);
+//        final FileWatcher watcher = new FileWatcher(Paths.get(this.path), queue);
         System.out.println("Watching...");
 //        watcher.start();
 

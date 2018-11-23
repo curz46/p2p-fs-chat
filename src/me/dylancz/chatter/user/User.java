@@ -20,8 +20,12 @@ public class User {
         return user;
     }
 
+    public UUID getUUID() {
+        return this.uuid;
+    }
+
     public InputFileHandle getHandle() {
-        return handle;
+        return this.handle;
     }
 
     public void setHandle(final InputFileHandle handle) {

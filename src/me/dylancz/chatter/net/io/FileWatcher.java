@@ -11,19 +11,21 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Queue;
+import me.dylancz.chatter.event.DefaultEventBus;
+import me.dylancz.chatter.event.EventListener;
+import me.dylancz.chatter.event.IEventBus;
+import me.dylancz.chatter.event.file.FileWatchEvent;
 import me.dylancz.chatter.net.Event;
 import me.dylancz.chatter.net.Event.EventType;
 
 public class FileWatcher implements Runnable {
 
-    public static long lastMessage;
-
-    private final Path path;
+    private final Path root;
     private final WatchService watcher;
-    private final Queue<Event> queue;
+    private final DefaultEventBus eventBus;
 
-    public FileWatcher(final Path path, final Queue<Event> queue) {
-        this.path = path;
+    public FileWatcher(final Path root, final DefaultEventBus eventBus) {
+        this.root = root;
         try {
             this.watcher = FileSystems.getDefault().newWatchService();
         } catch (final IOException e) {
@@ -31,14 +33,11 @@ public class FileWatcher implements Runnable {
         }
 
         try {
-            // ENTRY_CREATE: A new user has joined the network.
-            // ENTRY_DELETE: An existing user has left the network.
-            // ENTRY_MODIFY: An existing user has sent a packet.
-            path.register(this.watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+            root.register(this.watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        this.queue = queue;
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -48,18 +47,17 @@ public class FileWatcher implements Runnable {
                 final WatchKey key = this.watcher.take();
                 for (final WatchEvent event : key.pollEvents()) {
                     final Path relative = (Path) event.context();
-                    final Path path = this.path.resolve(relative);
+                    final Path path = this.root.resolve(relative);
                     if (event.kind() == ENTRY_CREATE) {
-                        this.queue.add(new Event(EventType.USER_CONNECT, path));
+                        this.eventBus.post(new FileWatchEvent.Created(path));
                     } else if (event.kind() == ENTRY_DELETE) {
-                        this.queue.add(new Event(EventType.USER_DISCONNECT, path));
+                        this.eventBus.post(new FileWatchEvent.Deleted(path));
                     } else if (event.kind() == ENTRY_MODIFY) {
-                        this.queue.add(new Event(EventType.USER_MESSAGE, path));
-                        lastMessage = System.currentTimeMillis();
+                        this.eventBus.post(new FileWatchEvent.Modified(path));
                     }
                 }
                 key.reset();
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
