@@ -23,9 +23,6 @@ public class PacketIO {
                 // Packets follow the given format...
                 // ==================================
                 // byte; packet id
-                // byte; target type
-                // if target type == user
-                //   string; UUID
                 // int; length
                 // bytes; content
                 final int packetId = randomAccessFile.readByte();

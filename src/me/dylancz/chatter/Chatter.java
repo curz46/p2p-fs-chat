@@ -62,7 +62,7 @@ public class Chatter {
         final BlockingQueue<Event> queue = new LinkedBlockingQueue<>(10);
         final FileWatcher watcher = new FileWatcher(Paths.get(this.path), queue);
         System.out.println("Watching...");
-        watcher.start();
+//        watcher.start();
 
         new EventRouter(packetIO, userHandler, queue).start();
 

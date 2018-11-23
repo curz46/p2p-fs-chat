@@ -41,12 +41,6 @@ public class FileWatcher implements Runnable {
         this.queue = queue;
     }
 
-    public Thread start() {
-        final Thread thread = new Thread(this);
-        thread.start();
-        return thread;
-    }
-
     @Override
     public void run() {
         while (true) {

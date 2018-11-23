@@ -1,7 +1,5 @@
 package me.dylancz.chatter;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -9,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 import me.dylancz.chatter.event.EventBus;
-import me.dylancz.chatter.event.packet.PacketBus;
 import me.dylancz.chatter.user.User;
 import me.dylancz.chatter.user.UserHandler;
 
@@ -45,12 +42,9 @@ public class Client {
                 .map(User::fromHandle)
                 .collect(Collectors.toSet())
         );
-        // Initialise the Buses
+//        // Initialise the Buses
         final EventBus eventBus = new EventBus();
-        final PacketBus packetBus = new PacketBus();
-        // Lock their execution to the current Thread.
-        eventBus.lock();
-        packetBus.lock();
+//        final PacketBus packetBus = new PacketBus();
 
         // Get UUID from Storage
         final Path storagePath = this.home.resolve(STORAGE_NAME);
@@ -58,8 +52,7 @@ public class Client {
         if (uuid == null) throw new RuntimeException("readOrGenerateUUID(...) == null");
 
         // Initialise the FileWatcher
-
-
+        
     }
 
 }

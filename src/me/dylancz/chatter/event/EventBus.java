@@ -8,34 +8,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EventBus extends LockableBus {
+public class EventBus<E> implements IEventBus<E, EventListener<E>> {
 
-    private final Map<Class<? extends Event>, List<Consumer<Object>>> listenerMap = new HashMap<>();
+    protected final List<EventListener<E>> listeners = new ArrayList<>();
 
     @SuppressWarnings("SuspiciousMethodCalls")
-    public <T extends Event> void post(final T event) {
-        this.verifyThread();
+    public <T extends E> void post(final T event) {
         Class<?> tempClass = event.getClass();
         while (tempClass != Object.class) {
-            if (!this.listenerMap.containsKey(tempClass)) {
-                tempClass = tempClass.getSuperclass();
-                continue;
-            }
-            final List<Consumer<Object>> list = this.listenerMap.get(tempClass);
-            for (final Consumer<Object> consumer : list) {
-                consumer.accept(event);
-            }
+            final Class<?> clazz = tempClass;
+            //noinspection unchecked
+            this.listeners.stream()
+                .filter(listener -> listener.getEventClass() == clazz)
+                .forEach(listener -> ((Consumer<E>) listener.getConsumer()).accept(event));
             tempClass = tempClass.getSuperclass();
         }
     }
 
-    public <T extends Event> void registerListener(final Consumer<T> listener, final Class<T> clazz) {
-        //noinspection unchecked
-        this.listenerMap
-            .computeIfAbsent(clazz, k -> new ArrayList<>())
-            .add((Consumer) listener);
+    @Override
+    public void registerListener(final EventListener<E> listener) {
+        this.listeners.add(listener);
     }
 
+    @Override
     public void registerListeners(final Object object) {
         final Class<?> clazz = object.getClass();
         for (final Method method : clazz.getMethods()) {
@@ -47,16 +42,16 @@ public class EventBus extends LockableBus {
 //            if (!Event.class.isAssignableFrom(eventClass)) {
 //                throw new RuntimeException("The parameter is not a subclass of Event.");
 //            }
-            final Class<? extends Event> castedClass;
+            final Class<? extends E> castedClass;
             // TODO: When a @Subscribe method has some nonsense parameter like a String, this doesn't break.
             // TODO: That's very suspicious; something to look into.
             try {
                 //noinspection unchecked
-                castedClass = (Class<? extends Event>) eventClass;
+                castedClass = (Class<? extends E>) eventClass;
             } catch (final ClassCastException e) {
                 throw new RuntimeException("The parameter is not a subclass of this Event type: ", e);
             }
-            this.registerListener(event -> {
+            final Consumer<E> consumer = event -> {
                 try {
                     method.invoke(object, event);
                 } catch (IllegalAccessException | InvocationTargetException e) {
@@ -64,7 +59,9 @@ public class EventBus extends LockableBus {
                         "An exception occurred while invoking a listener: ", e
                     );
                 }
-            }, castedClass);
+            };
+            //noinspection unchecked
+            this.registerListener(new EventListener(consumer, castedClass));
         }
     }
 
