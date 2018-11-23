@@ -6,7 +6,9 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
-import me.dylancz.chatter.event.EventBus;
+import me.dylancz.chatter.event.DefaultEventBus;
+import me.dylancz.chatter.event.EventListener;
+import me.dylancz.chatter.event.EventTest.TestEvent;
 import me.dylancz.chatter.user.User;
 import me.dylancz.chatter.user.UserHandler;
 
@@ -42,9 +44,9 @@ public class Client {
                 .map(User::fromHandle)
                 .collect(Collectors.toSet())
         );
-//        // Initialise the Buses
-        final EventBus eventBus = new EventBus();
-//        final PacketBus packetBus = new PacketBus();
+        // Initialise the EventBus
+        final DefaultEventBus eventBus = new DefaultEventBus();
+        (new Thread(eventBus)).start();
 
         // Get UUID from Storage
         final Path storagePath = this.home.resolve(STORAGE_NAME);

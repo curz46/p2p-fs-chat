@@ -1,6 +1,5 @@
 package me.dylancz.chatter.event;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
 import me.dylancz.chatter.event.packet.PacketReceivedEvent;
 import me.dylancz.chatter.net.packet.ConnectedPacket;
 import me.dylancz.chatter.net.packet.PingPacket;
@@ -26,7 +25,6 @@ public class EventTest {
         eventBus.registerListeners(new EventTest());
         eventBus.post(new PacketReceivedEvent<>(new PingPacket(), null));
         eventBus.post(new PacketReceivedEvent<>(new ConnectedPacket(), null));
-        eventBus.post(new TestEvent());
     }
 
     @Subscribe

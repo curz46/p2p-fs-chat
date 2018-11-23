@@ -7,7 +7,7 @@ public abstract class PacketEvent<T extends Packet> extends ParameterisedEvent {
 
     protected final T packet;
 
-    public PacketEvent(final T packet) {
+    PacketEvent(final T packet) {
         this.packet = packet;
     }
 

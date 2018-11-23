@@ -30,6 +30,7 @@ public class EventBus<E> implements IEventBus<E, EventListener<E>> {
         this.listeners.add(listener);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void registerListeners(final Object object) {
         final Class<?> clazz = object.getClass();
@@ -46,7 +47,6 @@ public class EventBus<E> implements IEventBus<E, EventListener<E>> {
             // TODO: When a @Subscribe method has some nonsense parameter like a String, this doesn't break.
             // TODO: That's very suspicious; something to look into.
             try {
-                //noinspection unchecked
                 castedClass = (Class<? extends E>) eventClass;
             } catch (final ClassCastException e) {
                 throw new RuntimeException("The parameter is not a subclass of this Event type: ", e);
@@ -60,7 +60,6 @@ public class EventBus<E> implements IEventBus<E, EventListener<E>> {
                     );
                 }
             };
-            //noinspection unchecked
             this.registerListener(new EventListener(consumer, castedClass));
         }
     }
