@@ -1,9 +1,9 @@
-package me.dylancz.chatter.net.packet;
+package me.dylancz.chatter.packet;
 
-public class PongPacket extends Packet  {
+public class PingPacket extends Packet {
 
-    public PongPacket() {
-        super(PacketType.PONG);
+    public PingPacket() {
+        super(PacketType.PING);
     }
 
     @Override

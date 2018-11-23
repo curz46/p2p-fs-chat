@@ -1,4 +1,4 @@
-package me.dylancz.chatter.net.packet;
+package me.dylancz.chatter.packet;
 
 import me.dylancz.chatter.util.ByteBuf;
 

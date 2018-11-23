@@ -1,4 +1,4 @@
-package me.dylancz.chatter.net.packet;
+package me.dylancz.chatter.packet;
 
 public abstract class Packet {
 
