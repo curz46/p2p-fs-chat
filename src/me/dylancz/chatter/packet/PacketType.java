@@ -6,7 +6,8 @@ public enum PacketType {
 
     CONNECTED(0, ConnectedPacket.class, ConnectedPacket::new),
     PING(1, PingPacket.class, PingPacket::new),
-    PONG(2, PongPacket.class, PongPacket::new);
+    PONG(2, PongPacket.class, PongPacket::new),
+    MESSAGE(3, MessagePacket.class, MessagePacket::new);
 
     private final int id;
     private final Class<? extends Packet> packetClass;

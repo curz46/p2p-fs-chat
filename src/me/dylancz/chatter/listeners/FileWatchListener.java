@@ -8,6 +8,8 @@ import me.dylancz.chatter.event.DefaultEventBus;
 import me.dylancz.chatter.event.Subscribe;
 import me.dylancz.chatter.event.file.FileWatchEvent;
 import me.dylancz.chatter.event.packet.PacketReceivedEvent;
+import me.dylancz.chatter.event.user.UserCreateEvent;
+import me.dylancz.chatter.event.user.UserDiscardEvent;
 import me.dylancz.chatter.file.InputFileHandle;
 import me.dylancz.chatter.packet.Packet;
 import me.dylancz.chatter.user.User;
@@ -34,7 +36,9 @@ public class FileWatchListener {
             .orElseThrow(() -> new RuntimeException("Unable to parse UUID from File name: " + path));
         // If the UUID is the ID of this Client, ignore the Event.
         if (this.selfUUID.equals(uuid)) return;
-        this.userHandler.addUser(User.fromHandle(handle));
+        final User user = User.fromHandle(handle);
+        this.userHandler.addUser(user);
+        this.eventBus.post(new UserCreateEvent(user));
         System.out.println("User created: " + path);
     }
 
@@ -43,11 +47,12 @@ public class FileWatchListener {
         final Path path = event.getPath();
         for (final User user : this.userHandler.getUsers()) {
             if (user.getHandle().getFile().toPath().equals(path)) {
+                this.eventBus.post(new UserDiscardEvent(user));
                 this.userHandler.removeUser(user);
-                break;
+                System.out.println("User removed: " + path);
+                return;
             }
         }
-        System.out.println("User removed: " + path);
     }
 
     @Subscribe

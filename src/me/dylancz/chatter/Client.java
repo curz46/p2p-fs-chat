@@ -4,7 +4,11 @@ import me.dylancz.chatter.event.DefaultEventBus;
 import me.dylancz.chatter.file.FileWatcher;
 import me.dylancz.chatter.file.OutputFileHandle;
 import me.dylancz.chatter.file.PacketWriter;
+import me.dylancz.chatter.gui.SystemMessage;
+import me.dylancz.chatter.gui.Window;
 import me.dylancz.chatter.listeners.FileWatchListener;
+import me.dylancz.chatter.listeners.MessageListener;
+import me.dylancz.chatter.packet.MessagePacket;
 import me.dylancz.chatter.user.User;
 import me.dylancz.chatter.user.UserHandler;
 import me.dylancz.chatter.util.Bootstrapper;
@@ -26,12 +30,13 @@ public class Client {
     private final Path home;
 
     public static void main(final String[] args) {
-//        if (args.length != 2) {
-//            throw new RuntimeException("args: <root> <home>");
-//        }
-//        final Path root = Paths.get(args[0]);
-//        final Path home = Paths.get(args[1]);
+        if (args.length != 2) {
+            throw new RuntimeException("args: <root> <home>");
+        }
+        final Path root = Paths.get(args[0]);
+        final Path home = Paths.get(args[1]);
         (new Client(Paths.get("C:\\Users\\Dylan Curzon\\Desktop\\p2p-test"), Paths.get("%HOME%"))).start();
+//        (new Client(root, home)).start();
     }
 
     public Client(final Path root, final Path home) {
@@ -75,6 +80,14 @@ public class Client {
                 .collect(Collectors.toSet())
         );
         userHandler.register();
+
+        final Window window = new Window(
+            content -> writer.write(new MessagePacket(content))
+        );
+        window.update(new SystemMessage("There are currently " + userHandler.getUsers().size() + " users online."));
+        window.register(eventBus);
+
+        eventBus.registerListeners(new MessageListener(window));
     }
 
 }

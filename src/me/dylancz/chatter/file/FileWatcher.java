@@ -41,6 +41,7 @@ public class FileWatcher implements Runnable {
                     if (event.kind() == ENTRY_CREATE) {
                         this.eventBus.post(new FileWatchEvent.Created(path));
                     } else if (event.kind() == ENTRY_DELETE) {
+                        System.out.println("delete");
                         this.eventBus.post(new FileWatchEvent.Deleted(path));
                     } else if (event.kind() == ENTRY_MODIFY) {
                         this.eventBus.post(new FileWatchEvent.Modified(path));
